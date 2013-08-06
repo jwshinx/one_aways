@@ -1,9 +1,12 @@
-ven a start word "causes"; given dictionary of sorted words.  find count comprising
+# Given a start word "causes"; given dictionary of sorted words.  find count comprising
 # all words in dictionary that are "one-away" (defined as replace any one 
 # letter with any letter of alphabet, delete any one letter, or
 # insert one letter). one-aways also have one-aways, and so on.
+#                           
+# dictionary.txt can be found at:
+# http://docs.oracle.com/javase/tutorial/collections/interfaces/examples/dictionary.txt 
 #
-# ruby 1.8
+# ruby 1.9.3
 # 
 
 require "benchmark"
@@ -64,7 +67,8 @@ def build_permutations wordsym
   list_matches 
 end
 
-LISTWORDS = make_hash(read_lines(File.new('medium.txt').read))  # 8 
+#LISTWORDS = make_hash(read_lines(File.new('dictionary.txt').read))  # 8 
+LISTWORDS = make_hash(read_lines(File.new('short.txt').read))  # 8 
 LETTERS = ("a".."z").to_a.join
 
 word = "causes"
@@ -75,29 +79,30 @@ temphash = Hash.new(0)
 mytemphash1[word.to_sym] += 1
 mytemphash2[word.to_sym] += 1
 @totalcount = 0
-totaltime = Benchmark.measure do
+totaltime = Benchmark.measure do |x|
 
-while !mytemphash2.empty? 
-  puts "=== START #{@totalcount} =========================================="
-
-  mytemphash2.clear
-  temphash.clear
-
-  mytemphash1.each_key do |x|
-    temphash = build_permutations(x) 
-    temphash.each_key do |x| 
-      mytemphash2[x] += 1 #unless @myanswers.has_key?(x)
-      @totalcount += 1 
+  while !mytemphash2.empty? 
+    puts "=== START #{@totalcount} =========================================="
+  
+    mytemphash2.clear
+    temphash.clear
+  
+    mytemphash1.each_key do |x|
+      temphash = build_permutations(x) 
+      temphash.each_key do |x| 
+        mytemphash2[x] += 1 #unless @myanswers.has_key?(x)
+        @totalcount += 1 
+      end
     end
+  
+    mytemphash1.clear
+    mytemphash1.merge!(mytemphash2)
+    puts "=== END #{@totalcount} ============================================" 
+      
   end
 
-  mytemphash1.clear
-  mytemphash1.merge!(mytemphash2)
-  puts "=== END #{@totalcount} ============================================"
-end
-
 end # benchmark totaltime
-
+     
 puts totaltime
 puts "@totalcount: #{@totalcount}"
 
